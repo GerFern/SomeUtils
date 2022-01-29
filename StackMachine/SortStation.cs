@@ -1,16 +1,23 @@
-﻿namespace StackMachine
+﻿using StackMachine.Symbol;
+
+namespace StackMachine
 {
-    public class SortStation
+    public class SortStation : ICloneable
     {
+        public virtual object Clone()
+        {
+            return new SortStation();
+        }
+
         public virtual IEnumerable<ISymbol> Sort(IEnumerable<ISymbol> symbols)
         {
 #if DEBUG
             List<ISymbol> debug = new();
 #endif
-            Stack<ISymbol> stack = new Stack<ISymbol>();
-            Stack<NameVariable> stackFuncs = new Stack<NameVariable>();
+            Stack<ISymbol> stack = new();
+            Stack<NameVariable> stackFuncs = new();
             NameVariable? tmpNameVariable = null;
-            List<ISymbol> current = new List<ISymbol>();
+            List<ISymbol> current = new();
             ISymbol? prev = null;
             foreach (ISymbol symbol in symbols)
             {
@@ -28,7 +35,7 @@
                 }
                 else if (symbol is Operation operation)
                 {
-                    while (stack.TryPeek(out ISymbol symbolStack) && symbolStack is Operation operationStack && operationStack.Priority >= operation.Priority)
+                    while (stack.TryPeek(out ISymbol? symbolStack) && symbolStack is Operation operationStack && (operationStack.Priority > operation.Priority || (operationStack.Priority == operation.Priority && operationStack.BinaryType == BinaryType.BinaryLeft)))
                     {
                         current.Add(stack.Pop());
                     }
@@ -66,6 +73,11 @@
                 else if (symbol is SplitArg arg)
                 {
                     stackFuncs.Peek().ArgCount++;
+                    while(stack.TryPeek(out var symbolStack))
+                    {
+                        if (symbolStack is Scobe) break;
+                        else current.Add(stack.Pop());
+                    }
                 }
                 if (current.Count > 0)
                 {

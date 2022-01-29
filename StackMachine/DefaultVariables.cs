@@ -1,4 +1,5 @@
 ﻿using MathOperations.Extensions;
+using StackMachine.Symbol;
 
 namespace StackMachine
 {
@@ -7,6 +8,7 @@ namespace StackMachine
         public static IEnumerable<KeyValuePair<string, ISymbol>> GetDefaultVariables()
         {
             yield return FuncConverter();
+            yield return FuncIf();
         }
 
         public static KeyValuePair<string, ISymbol> FuncConverter()
@@ -15,27 +17,27 @@ namespace StackMachine
                 "to",
                 new VariableFunc
                 {
-                    Func = vs =>
+                    Func = input =>
                     {
-                        var v1 = vs[0];
-                        var v2 = vs[1];
+                        var v1 = input[0];
+                        var v2 = input[1];
                         string type = v2.Value.ToString().ToLowerInvariant()!;
 
                         VariableType variableType = type switch
                         {
                             "bool" or "boolean" => VariableType.Boolean,
-                            "byte" => VariableType.Byte,
-                            "sbyte" => VariableType.SByte,
-                            "short" or "int16" => VariableType.Int16,
-                            "ushort" or "uint16" => VariableType.UInt16,
-                            "int" or "int32" => VariableType.Int32,
-                            "uint" or "uint32" => VariableType.UInt32,
-                            "long" or "int64" => VariableType.Int64,
-                            "ulong" or "ulong64" => VariableType.UInt64,
-                            "float" or "single" => VariableType.Single,
-                            "double" => VariableType.Double,
-                            "char" => VariableType.Char,
-                            "string" => VariableType.String,
+                            "byte" or "b" => VariableType.Byte,
+                            "sbyte" or "sb" => VariableType.SByte,
+                            "short" or "int16" or "s" => VariableType.Int16,
+                            "ushort" or "uint16" or "us" => VariableType.UInt16,
+                            "int" or "int32" or "i" => VariableType.Int32,
+                            "uint" or "uint32" or "ui" => VariableType.UInt32,
+                            "long" or "int64" or "l" => VariableType.Int64,
+                            "ulong" or "ulong64" or "ul" => VariableType.UInt64,
+                            "float" or "single" or "f" => VariableType.Single,
+                            "double" or "d" => VariableType.Double,
+                            "char" or "c" => VariableType.Char,
+                            "string" or "str" => VariableType.String,
                             _ => VariableType.Object
                         };
 
@@ -43,7 +45,7 @@ namespace StackMachine
                         object ret = null;
                         switch (v1.VariableType)
                         {
-                            case global::StackMachine.VariableType.Boolean:
+                            case VariableType.Boolean:
                                 bool boolVal = (bool)v1.Value;
                                 ret = variableType switch
                                 {
@@ -62,7 +64,7 @@ namespace StackMachine
                                     VariableType.String => boolVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.Byte:
+                            case VariableType.Byte:
                                 byte byteVal = (byte)v1.Value;
                                 ret = variableType switch
                                 {
@@ -81,7 +83,7 @@ namespace StackMachine
                                     VariableType.String => byteVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.SByte:
+                            case VariableType.SByte:
                                 sbyte sbyteVal = (sbyte)v1.Value;
                                 ret = variableType switch
                                 {
@@ -100,7 +102,7 @@ namespace StackMachine
                                     VariableType.String => sbyteVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.Int16:
+                            case VariableType.Int16:
                                 short shortVal = (short)v1.Value;
                                 ret = variableType switch
                                 {
@@ -119,7 +121,7 @@ namespace StackMachine
                                     VariableType.String => shortVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.UInt16:
+                            case VariableType.UInt16:
                                 ushort ushortVal = (ushort)v1.Value;
                                 ret = variableType switch
                                 {
@@ -138,7 +140,7 @@ namespace StackMachine
                                     VariableType.String => ushortVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.Int32:
+                            case VariableType.Int32:
                                 int intVal = (int)v1.Value;
                                 ret = variableType switch
                                 {
@@ -157,7 +159,7 @@ namespace StackMachine
                                     VariableType.String => intVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.UInt32:
+                            case VariableType.UInt32:
                                 uint uintVal = (uint)v1.Value;
                                 ret = variableType switch
                                 {
@@ -176,7 +178,7 @@ namespace StackMachine
                                     VariableType.String => uintVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.Int64:
+                            case VariableType.Int64:
                                 long longVal = (long)v1.Value;
                                 ret = variableType switch
                                 {
@@ -195,7 +197,7 @@ namespace StackMachine
                                     VariableType.String => longVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.UInt64:
+                            case VariableType.UInt64:
                                 ulong ulongVal = (ulong)v1.Value;
                                 ret = variableType switch
                                 {
@@ -214,7 +216,7 @@ namespace StackMachine
                                     VariableType.String => ulongVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.Single:
+                            case VariableType.Single:
                                 float floatVal = (float)v1.Value;
                                 ret = variableType switch
                                 {
@@ -233,7 +235,7 @@ namespace StackMachine
                                     VariableType.String => floatVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.Double:
+                            case VariableType.Double:
                                 double doubleVal = (double)v1.Value;
                                 ret = variableType switch
                                 {
@@ -252,7 +254,7 @@ namespace StackMachine
                                     VariableType.String => doubleVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.Char:
+                            case VariableType.Char:
                                 ushort charVal = (ushort)(char)v1.Value;
                                 ret = variableType switch
                                 {
@@ -271,7 +273,7 @@ namespace StackMachine
                                     VariableType.String => charVal.ToString()
                                 };
                                 break;
-                            case global::StackMachine.VariableType.String:
+                            case VariableType.String:
                                 string stringVal = (string)v1.Value;
                                 ret = variableType switch
                                 {
@@ -301,145 +303,61 @@ namespace StackMachine
                     }
                 });
         }
-    }
 
-    public static class DefaultParser
-    {
-        public static IEnumerable<KeyValuePair<string, string>> GetDefaultDefs()
+        public static KeyValuePair<string, ISymbol> FuncIf()
         {
-            yield return new KeyValuePair<string, string>("ts", "\\\\\\\"");
-            yield return new KeyValuePair<string, string>("word", @"(?=[^\d])\w+");
-            yield return new KeyValuePair<string, string>("op", @"[\+\-\*\/]");
-            yield return new KeyValuePair<string, string>("s_start", @"\(");
-            yield return new KeyValuePair<string, string>("s_end", @"\)");
-            yield return new KeyValuePair<string, string>("digit", @"[\d.]+");
-            yield return new KeyValuePair<string, string>("char", @"\'.\'");
-            yield return new KeyValuePair<string, string>("string", "\\\"((?&def_ts)|[^\\\"])*\\\"");
-            yield return new KeyValuePair<string, string>("var_f", @"(?&def_word)\(\s*\)?");
-            yield return new KeyValuePair<string, string>("var", @"(?&def_word)");
-            yield return new KeyValuePair<string, string>("s_arg", ",");
+            return new KeyValuePair<string, ISymbol>(
+                "if",
+                new VariableFunc()
+                {
+                    Func = input =>
+                    {
+                        bool iif = false;
+                        var variableType = input[0].VariableType;
+                        iif = variableType switch
+                        {
+                            VariableType.Boolean => (bool)input[0].Value,
+                            VariableType.Byte => ((byte)input[0].Value).Convert<byte, bool>(),
+                            VariableType.SByte => ((sbyte)input[0].Value).Convert<sbyte, bool>(),
+                            VariableType.Int16 => ((short)input[0].Value).Convert<short, bool>(),
+                            VariableType.UInt16 => ((ushort)input[0].Value).Convert<ushort, bool>(),
+                            VariableType.Int32 => ((int)input[0].Value).Convert<int, bool>(),
+                            VariableType.UInt32 => ((uint)input[0].Value).Convert<uint, bool>(),
+                            VariableType.Int64 => ((long)input[0].Value).Convert<long, bool>(),
+                            VariableType.UInt64 => ((ulong)input[0].Value).Convert<ulong, bool>(),
+                            VariableType.Single => ((float)input[0].Value).Convert<float, bool>(),
+                            VariableType.Double => ((double)input[0].Value).Convert<double, bool>(),
+                            VariableType.Char => ((ushort)(char)input[0].Value).Convert<ushort, bool>(),
+                            VariableType.String => !string.IsNullOrEmpty((string)input[0].Value),
+                        };
+
+                        if (iif) return input[1];
+                        else return input[2];
+                    }
+                }
+                );
         }
 
-        public static IEnumerable<KeyValuePair<string, Func<string, ISymbol[]?>>> GetDefaultSymbolCreators()
+        public static KeyValuePair<string, ISymbol> VarTrue()
         {
-            yield return new KeyValuePair<string, Func<string, ISymbol[]?>>(
-                "op",
-                a => a switch
+            return new KeyValuePair<string, ISymbol>(
+                "true",
+                new Variable()
                 {
-                    "+" => new[] { new Operation { OperationType = OperationType.BinaryAdd, Priority = 100 } },
-                    "-" => new[] { new Operation { OperationType = OperationType.BinarySub, Priority = 100 } },
-                    "*" => new[] { new Operation { OperationType = OperationType.BinaryMul, Priority = 200 } },
-                    "/" => new[] { new Operation { OperationType = OperationType.BinaryDiv, Priority = 200 } },
-                    _ => throw new Exception()
-                }
-            );
+                    VariableType = VariableType.Boolean,
+                    Value = true
+                });
+        }
 
-            yield return new KeyValuePair<string, Func<string, ISymbol[]?>>(
-                "s_start",
-                a => new[] { new Scobe { Type = Scobe.ScobeType.Start } }
-            );
-
-            yield return new KeyValuePair<string, Func<string, ISymbol[]?>>(
-                "s_end",
-                a => new[] { new Scobe { Type = Scobe.ScobeType.End } }
-            );
-
-            yield return new KeyValuePair<string, Func<string, ISymbol[]?>>(
-                "digit",
-                a => new[]
+        public static KeyValuePair<string, ISymbol> VarFalse()
+        {
+            return new KeyValuePair<string, ISymbol>(
+                "false",
+                new Variable()
                 {
-                    a.Contains('.') ?
-                    new Variable
-                    {
-                        VariableType = VariableType.Double,
-                        Value = double.Parse(a)
-                    } :
-                    new Variable
-                    {
-                        VariableType = VariableType.Int64,
-                        Value = long.Parse(a)
-                    }
-                }
-            );
-
-            yield return new KeyValuePair<string, Func<string, ISymbol[]?>>(
-               "char",
-                a => new[]
-                {
-                    new Variable
-                    {
-                        VariableType = VariableType.Char,
-                        Value = a[1]
-                    }
-                }
-            );
-
-            yield return new KeyValuePair<string, Func<string, ISymbol[]?>>(
-               "string",
-                a => new[]
-                {
-                    new Variable
-                    {
-                        VariableType = VariableType.String,
-                        Value = a[1..^1].Replace("\\\"","\"")
-                    }
-                }
-            );
-
-            yield return new KeyValuePair<string, Func<string, ISymbol[]?>>(
-               "var_f",
-                a =>
-                {
-                    ISymbol[] vs;
-                    if (a.EndsWith(')'))
-                    {
-                        vs = new ISymbol[]
-                        {
-                        new NameVariable
-                        {
-                            Name = a[..a.IndexOf('(')],
-                            IsFunc = true,
-                            EmptyArg = true
-                        }
-                        };
-                    }
-                    else
-                    {
-                        var f = new NameVariable
-                        {
-                            Name = a[..a.IndexOf('(')],
-                            IsFunc = true,
-                            ArgCount = 1
-                        };
-                        vs = new ISymbol[]
-                        {
-                        f,
-                        new Scobe
-                        {
-                            Type = Scobe.ScobeType.Start,
-                            Func = f
-                        }
-                        };
-                    }
-                    return vs;
-                }
-            );
-
-            yield return new KeyValuePair<string, Func<string, ISymbol[]?>>(
-                "var",
-                a => new[]
-                {
-                    new NameVariable
-                    {
-                        Name = a
-                    }
-                }
-            );
-
-            yield return new KeyValuePair<string, Func<string, ISymbol[]?>>(
-                "s_arg",
-                a => new[] { new SplitArg() }
-            );
+                    VariableType = VariableType.Boolean,
+                    Value = false
+                });
         }
     }
 }

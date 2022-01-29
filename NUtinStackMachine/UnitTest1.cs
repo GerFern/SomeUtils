@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using StackMachine;
+using StackMachine.Symbol;
 using System;
 using System.Collections.Generic;
 
@@ -7,12 +8,12 @@ namespace NUtinStackMachine
 {
     public class Tests
     {
-        EngineExecutor engine;
+        StackMachineEngine engine;
 
         [SetUp]
         public void Setup()
         {
-            engine = new EngineExecutor();
+            engine = new StackMachineEngine();
             engine.Variables["get100"] = new VariableGet
             {
                 Func = () => 100L,
@@ -20,7 +21,7 @@ namespace NUtinStackMachine
             };
             engine.Variables["add"] = new VariableFunc
             {
-                Func = vs => new Variable() { Value = ((long)vs[0].Value) + ((long)vs[1].Value), VariableType = VariableType.Int64 }
+                Func = input => new Variable() { Value = ((long)input[0].Value) + ((long)input[1].Value), VariableType = VariableType.Int64 }
             };
         }
         
@@ -107,6 +108,21 @@ namespace NUtinStackMachine
         {
             var ret = engine.Execute("1 + \"Hello\" + ' ' + \"world\" + (2 * 3)");
             Assert.AreEqual((string)ret.Value, "1Hello world6");
+        }
+
+        [Test]
+        public void Test13()
+        {
+            var ret = engine.Execute("to(\"50\", \"long\") + 50");
+            Assert.AreEqual((long)ret.Value, 100);
+        }
+
+        [Test]
+        public void Test14()
+        {
+            engine.Execute("hello = \"Hello \" + \"world\"");
+            var ret = engine.Execute("hello + 123");
+            Assert.AreEqual((string)ret.Value, "Hello world123");
         }
     }
 }
